@@ -132,6 +132,7 @@ def ask_for_anime():
 class InteractiveMode():
     def main_loop(self):
         database = Database("anime.db")
+        mode = ""
         while mode != "exit":
             print("please choose a mode:")
             mode = raw_input("(add/update/remove/list/exit)")
@@ -168,15 +169,16 @@ class InteractiveMode():
         database.remove_anime()
     def list(self,database):
         rows = database.list_anime()
-        columns = len(rows[0])
-        for row in rows:
-            cellCount = 0
-            for cell in row:
-                cellCount += 1
-                if cellCount < columns:
-                    print str(cell),
-                else:
-                    print str(cell)
+        if len(rows) > 1:
+            columns = len(rows[0])
+            for row in rows:
+                cellCount = 0
+                for cell in row:
+                    cellCount += 1
+                    if cellCount < columns:
+                        print str(cell),
+                    else:
+                        print str(cell)
         
 
 class Command(argparse.Action):
