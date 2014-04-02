@@ -37,18 +37,23 @@ class Database():
         #committed. Once it's committed, the changes are saved to the database.
         try:
             self.cur.execute("INSERT INTO anime VALUES(?, ?, ?, ?, ?, ?, ?, ?, "
-                             "?, ?, ?, ?, ?, ?, ?, ?)", data)
+                             "?, ?, ?, ?, ?, ?, ?, ?, ?)", data)
             self.db.commit()
             print("anime added successfully")
         #If the database can't add the data into the table, the changes are
         #rolled back, the database is closed, and the error message is printed.
-        except lite.Error, e:
+        except sqlite3.Error, e:
             self.db.rollback()
             self.db.close()
             print "Error %s:" % e.args[0]
 
-    def update_anime(self):
-        pass
+    def update_anime(self,name,field,value):
+        if field == "name":
+            self.cur.execute("UPDATE anime SET Name=? WHERE Name=?",
+                             (value, name))
+            self.db.commit()
+        else:
+            print "not implemented"
 
     def remove_anime(self):
         pass
@@ -132,8 +137,7 @@ def ask_for_anime():
     return data
 
 class InteractiveMode():
-    def main_loop(self):
-        database = Database("anime.db")
+    def main_loop(self,database):
         mode = ""
         while mode != "exit":
             print("please choose a mode:")
@@ -171,7 +175,7 @@ class InteractiveMode():
         database.remove_anime()
     def list(self,database):
         rows = database.list_anime()
-        if len(rows) > 1:
+        if len(rows) > 0:
             columns = len(rows[0])
             for row in rows:
                 cellCount = 0
@@ -186,16 +190,20 @@ class InteractiveMode():
 
 class Command(argparse.Action):
     def __call__(self, parser, namespace, values, option_string=None):
+        database = Database("anime.db")
         if self.dest == "interactive":
-            InteractiveMode().main_loop()
+            InteractiveMode().main_loop(database)
         elif self.dest == "add":
             pass
         elif self.dest == "update":
-            pass
+            #This will be heavily modified when the appropriate flags
+            #are added. The variables are test code.
+            field = raw_input("Field: ")
+            newVal = raw_input("New value: ")
+            database.update_anime(values,field,newVal)
         elif self.dest == "remove":
             pass
         elif self.dest == "list":
-            database = Database("anime.db")
             InteractiveMode().list(database)
         else:
             print "something went wrong"
@@ -203,6 +211,9 @@ class Command(argparse.Action):
 #There is currently a bug with parsing the command-line arguments. Adding more
 #than one of the same flag runs the function twice instead of causing argparse
 #complain about it.
+
+#The CLI options will be expanded upon later to make them more powerful and
+#fully-featured.
 
 parser = argparse.ArgumentParser(description="Run PyAnime, an anime database "
                                  "management program.")
