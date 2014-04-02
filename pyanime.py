@@ -23,8 +23,9 @@ class Database():
                          "(Name TEXT PRIMARY KEY, Type TEXT, status TEXT, "
                          "score INT, current_ep INT, total_ep INT, "
                          "startDate TEXT, endDate TEXT, fansub TEXT, mal TEXT, "
-                         "season TEXT, rwCount INT, rwStartDate TEXT, "
-                         "rwEndDate TEXT, rwValue INT, priority TEXT)")
+                         "wiki TEXT, season TEXT, rwCount INT, "
+                         "rwStartDate TEXT, rwEndDate TEXT, rwValue INT, "
+                         "priority TEXT)")
 
     def add_anime(self, data):
         """Adds anime to the anime database. Accepts a tuple of tuples."""
@@ -123,10 +124,11 @@ def ask_for_anime():
     season = raw_input("anime season: ")
     fansub = raw_input("fansub group: ")
     MAL = raw_input("MyAnimeList URL: ")
+    wikipedia = raw_input("Wikipedia URL: ")
       
     data = ((name, type_, score, status, currentEp, totalEp, startDate, endDate,
              rwCount, rwStartDate, rwEndDate, rwValue, priority, season, fansub,
-             MAL))
+             MAL, wikipedia))
     return data
 
 class InteractiveMode():
@@ -179,7 +181,8 @@ class InteractiveMode():
                         print str(cell),
                     else:
                         print str(cell)
-        
+        else:
+            print("Database is empty")
 
 class Command(argparse.Action):
     def __call__(self, parser, namespace, values, option_string=None):
@@ -196,6 +199,10 @@ class Command(argparse.Action):
             InteractiveMode().list(database)
         else:
             print "something went wrong"
+
+#There is currently a bug with parsing the command-line arguments. Adding more
+#than one of the same flag runs the function twice instead of causing argparse
+#complain about it.
 
 parser = argparse.ArgumentParser(description="Run PyAnime, an anime database "
                                  "management program.")
