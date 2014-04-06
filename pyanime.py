@@ -3,6 +3,7 @@
 import sqlite3
 import sys
 import argparse
+#wxpython may be added for a GUI
 
 class Database():
     """provides all database I/O functions for anime database"""
@@ -48,12 +49,16 @@ class Database():
             print "Error %s:" % e.args[0]
 
     def update_anime(self,name,field,value):
-        if field == "name":
-            self.cur.execute("UPDATE anime SET Name=? WHERE Name=?",
+        #This currently requires the exact column name used by the database for
+        #the variable "field", else sqlite3 will throw an error
+        try:
+            self.cur.execute("UPDATE anime SET {}=? WHERE Name=?".format(field),
                              (value, name))
             self.db.commit()
-        else:
-            print "not implemented"
+        except sqlite3.Error, e:
+            self.db.rollback()
+            self.db.close()
+            print "Error %s:" % e.args[0]
 
     def remove_anime(self):
         pass
