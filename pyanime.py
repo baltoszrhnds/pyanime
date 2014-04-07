@@ -60,8 +60,14 @@ class Database():
             self.db.close()
             print "Error %s:" % e.args[0]
 
-    def remove_anime(self):
-        pass
+    def remove_anime(self,name):
+        try:
+            self.cur.execute("DELETE FROM anime WHERE Name=?",(name,))
+            self.db.commit()
+        except sqlite3.Error, e:
+            self.db.rollback()
+            self.db.close()
+            print "Error %s:" % e.args[0]
 
     def list_anime(self):
         self.cur.execute("SELECT * FROM anime")
@@ -207,7 +213,7 @@ class Command(argparse.Action):
             newVal = raw_input("New value: ")
             database.update_anime(values,field,newVal)
         elif self.dest == "remove":
-            pass
+            database.remove_anime(values)
         elif self.dest == "list":
             InteractiveMode().list(database)
         else:
