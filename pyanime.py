@@ -73,80 +73,6 @@ class Database():
         self.cur.execute("SELECT * FROM anime")
         return self.cur.fetchall()
 
-def ask_for_anime():
-    name = raw_input("anime name: ")
-    type_ = raw_input("(tv/movie/ova/ona): ") #The release medium
-    score = raw_input("score (1-10): ") #can be empty for no rating
-    #Status can be: watching, re-watching, on hold, complete, dropped, or
-    #planned.
-    status = raw_input("(watching/re-watching/on hold/complete/dropped/"
-                       "planned): ")
-    if status == "watching" or status == "on hold":
-        currentEp = raw_input("last episode watched: ")
-        totalEp = raw_input("total number of episodes: ")
-        startDate = raw_input("start date: ")
-        endDate = ""
-        rwCount = 0
-        rwStartDate = ""
-        rwEndDate = ""
-        rwValue = raw_input("rewatch value(1-5): ")
-        priority = raw_input("watch priority(1-3): ")
-    elif status == "re-watching":
-        currentEp = raw_input("last episode watched: ")
-        totalEp = raw_input("total number of episodes: ")
-        startDate = raw_input("original start date: ")
-        endDate = raw_input("original end date: ")
-        rwCount = raw_input("times completed: ")
-        rwStartDate = raw_input("rewatch start date: ")
-        if rwCount > 0:
-            rwEndDate = raw_input("last rewatch end date: ")
-        else:
-            rwEndDate = ""
-        rwValue = raw_input("rewatch value(1-5): ")
-        priority = raw_input("watch priority(1-3): ")
-    elif status == "dropped":
-        currentEp = raw_input("last episode watched: ")
-        totalEp = raw_input("total number of episodes: ")
-        startDate = raw_input("start date: ")
-        endDate = raw_input("end date: ")
-        rwCount = 0
-        rwStartDate = ""
-        rwEndDate = ""
-        rwValue = 0
-        priority = 0
-    elif status == "complete":
-        totalEp = raw_input("total number of episodes: ")
-        currentEp = totalEp
-        startDate = raw_input("start date: ")
-        endDate = raw_input("end date: ")
-        rwCount = raw_input("times completed: ")
-        if rwCount > 1:
-            rwStartDate = raw_input("rewatch started: ")
-            rwEndDate = raw_input("rewatch completed: ")
-        rwValue = raw_input("rewatch value(1-5): ")
-        priority = raw_input("watch priority(1-3): ")
-    elif status == "planned":
-        currentEp = 0
-        totalEp = raw_input("total number of episodes: ")
-        startDate = ""
-        endDate = ""
-        rwCount = 0
-        rwStartDate = ""
-        rwEndDate = ""
-        rwValue = ""
-        priority = raw_input("watch priority(1-3): ")
-    else:
-        print("something broke :/")
-    season = raw_input("anime season: ")
-    fansub = raw_input("fansub group: ")
-    MAL = raw_input("MyAnimeList URL: ")
-    wikipedia = raw_input("Wikipedia URL: ")
-      
-    data = ((name, type_, score, status, currentEp, totalEp, startDate, endDate,
-             rwCount, rwStartDate, rwEndDate, rwValue, priority, season, fansub,
-             MAL, wikipedia))
-    return data
-
 class InteractiveMode():
     def main_loop(self,database):
         mode = ""
@@ -178,8 +104,82 @@ class InteractiveMode():
                 break
             else:
                 print("incorrect input")
+
     def add(self,database):
-        database.add_anime(ask_for_anime())
+        while True:
+            name = raw_input("anime name: ")
+            if name != "":
+                break;
+        type_ = raw_input("(tv/movie/ova/ona): ") #The release medium
+        score = raw_input("score (1-10): ") #can be empty for no rating
+        #Status can be: watching, re-watching, on hold, complete, dropped, or
+        #planned.
+        status = raw_input("(watching/re-watching/on hold/complete/dropped/"
+                           "planned): ")
+        if status == "watching" or status == "on hold":
+            currentEp = raw_input("last episode watched: ")
+            totalEp = raw_input("total number of episodes: ")
+            startDate = raw_input("start date: ")
+            endDate = ""
+            rwCount = 0
+            rwStartDate = ""
+            rwEndDate = ""
+            rwValue = raw_input("rewatch value(1-5): ")
+            priority = raw_input("watch priority(1-3): ")
+        elif status == "re-watching":
+            currentEp = raw_input("last episode watched: ")
+            totalEp = raw_input("total number of episodes: ")
+            startDate = raw_input("original start date: ")
+            endDate = raw_input("original end date: ")
+            rwCount = raw_input("times completed: ")
+            rwStartDate = raw_input("rewatch start date: ")
+            if rwCount > 0:
+                rwEndDate = raw_input("last rewatch end date: ")
+            else:
+                rwEndDate = ""
+            rwValue = raw_input("rewatch value(1-5): ")
+            priority = raw_input("watch priority(1-3): ")
+        elif status == "dropped":
+            currentEp = raw_input("last episode watched: ")
+            totalEp = raw_input("total number of episodes: ")
+            startDate = raw_input("start date: ")
+            endDate = raw_input("end date: ")
+            rwCount = 0
+            rwStartDate = ""
+            rwEndDate = ""
+            rwValue = 0
+            priority = 0
+        elif status == "complete":
+            totalEp = raw_input("total number of episodes: ")
+            currentEp = totalEp
+            startDate = raw_input("start date: ")
+            endDate = raw_input("end date: ")
+            rwCount = raw_input("times completed: ")
+            if rwCount > 1:
+                rwStartDate = raw_input("rewatch started: ")
+                rwEndDate = raw_input("rewatch completed: ")
+            rwValue = raw_input("rewatch value(1-5): ")
+            priority = raw_input("watch priority(1-3): ")
+        elif status == "planned":
+            currentEp = 0
+            totalEp = raw_input("total number of episodes: ")
+            startDate = ""
+            endDate = ""
+            rwCount = 0
+            rwStartDate = ""
+            rwEndDate = ""
+            rwValue = ""
+            priority = raw_input("watch priority(1-3): ")
+        else:
+            print("something broke :/")
+        season = raw_input("anime season: ")
+        fansub = raw_input("fansub group: ")
+        MAL = raw_input("MyAnimeList URL: ")
+        wikipedia = raw_input("Wikipedia URL: ")
+        data = ((name, type_, score, status, currentEp, totalEp, startDate,
+                 endDate, rwCount, rwStartDate, rwEndDate, rwValue, priority,
+                 season, fansub, MAL, wikipedia))
+        database.add_anime(data)
     def update(self,database):
         database.update_anime()
     def remove(self,database):
